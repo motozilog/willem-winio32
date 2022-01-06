@@ -249,8 +249,6 @@ namespace willem_winio32
             return new ChipConfig();
         }
 
-
-
         public byte ReadReg()
         {
             WillemOP.SetCE_H();
@@ -261,4 +259,5 @@ namespace willem_winio32
             return EpromOp.MX29ReadRegCommand();
         }
     }
+
 }

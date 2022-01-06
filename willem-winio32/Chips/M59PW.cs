@@ -10,13 +10,33 @@ namespace willem_winio32
     //改部分写入、读取：ok
     public class M59PW016 : M59PW, IChip
     {
+        private int chipsize = 0x200000;
+        public override ChipConfig GetConfig()
+        {
+            ChipConfig config = new ChipConfig();
+            config.Erase = true;
+            config.Read = true;
+            config.Write = true;
+            config.ReadId = true;
+            config.Register = false;
+            config.EraseDelay = true;
+            config.EraseDelayTime = "FULL";
+            config.Note = "M59PW系列，写入时均不检查寄存器，请注意校验。擦除参数若填块地址，将只进行对该块的擦除";
+
+            config.ChipLength = chipsize;
+            config.ChipModel = "M59PW016";
+            config.DipSw = willem_winio32.Properties.Resources.MX29F1615;
+            config.Jumper = willem_winio32.Properties.Resources.M59PW016_Sub_SW;
+            config.Adapter = willem_winio32.Properties.Resources.SOP44_16Bit_Adapter;
+            return config;
+        }
     }
 
     public class M59PW032 : M59PW, IChip
     {
         private int chipsize = 0x400000;
         M59PW pw016 = new M59PW016();
-        public ChipConfig GetConfig()
+        public override ChipConfig GetConfig()
         {
             ChipConfig config = pw016.GetConfig();
             config.ChipLength = chipsize;
@@ -31,7 +51,7 @@ namespace willem_winio32
         private int chipsize = 0x800000;
         M59PW pw016 = new M59PW016();
         
-        public ChipConfig GetConfig()
+        public override ChipConfig GetConfig()
         {
             ChipConfig config = pw016.GetConfig();
             config.ChipLength = chipsize;
@@ -40,12 +60,8 @@ namespace willem_winio32
         }
     }
 
-
-
     public abstract class M59PW : IChip
     {
-        private int chipsize = 0x200000;
-
         public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
         {
             //初始化
@@ -155,7 +171,6 @@ namespace willem_winio32
             }
         }
 
-
         public void FullErase(string args)
         {
             Console.WriteLine("完整擦除");
@@ -247,25 +262,8 @@ namespace willem_winio32
         {
         }
 
-        public ChipConfig GetConfig()
-        {
-            ChipConfig config = new ChipConfig();
-            config.Erase = true;
-            config.Read = true;
-            config.Write = true;
-            config.ReadId = true;
-            config.Register = false;
-            config.EraseDelay = true;
-            config.EraseDelayTime = "FULL";
-            config.Note = "M59PW系列，写入时均不检查寄存器，请注意校验。擦除参数若填块地址，将只进行对该块的擦除";
-
-            config.ChipLength = chipsize;
-            config.ChipModel = "M59PW016";
-            config.DipSw = willem_winio32.Properties.Resources.MX29F1615;
-            config.Jumper = willem_winio32.Properties.Resources.M59PW016_Sub_SW;
-            config.Adapter = willem_winio32.Properties.Resources.SOP44_16Bit_Adapter;
-            return config;
-        }
+        public abstract ChipConfig GetConfig();
 
     }
+
 }
