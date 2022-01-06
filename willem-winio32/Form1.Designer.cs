@@ -643,7 +643,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(427, 463);
+            this.tabPage1.Size = new System.Drawing.Size(427, 462);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "芯片操作";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -938,13 +938,14 @@
             "W27C4096",
             "M59PW016",
             "M59PW032",
+            "MX29L3211",
             "M59PW064",
             "M59PW1282",
             "MX29F1615",
             "S25XX",
             "--不推荐芯片---",
             "MX29F1610",
-            "MX29L3211",
+            "MX29L3211_8bit",
             "MX26L6420",
             "--极不推荐芯片---",
             "MX26L12811",
@@ -1006,7 +1007,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(427, 463);
+            this.tabPage2.Size = new System.Drawing.Size(427, 462);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "打印口操作";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1021,7 +1022,7 @@
             this.tabPage3.Controls.Add(this.comboBoxLPTDeviceType);
             this.tabPage3.Location = new System.Drawing.Point(4, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(427, 463);
+            this.tabPage3.Size = new System.Drawing.Size(427, 462);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "设置";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1098,7 +1099,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(427, 463);
+            this.tabPage4.Size = new System.Drawing.Size(427, 462);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "其它芯片操作";
             this.tabPage4.UseVisualStyleBackColor = true;

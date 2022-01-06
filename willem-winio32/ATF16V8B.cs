@@ -289,38 +289,36 @@ namespace willem_winio32
 
         public void SpecialFunction(string Filename, string EraseDelay, string BaseAddr, string TryLength)
         {
-            WillemOP.SetAddr(0);
+            WillemOP.SetAddr(58);
             WillemOP.SetVCC_H();
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             WillemOP.SetVPP_H();
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
 
-            WillemOP.SetAddr(0x3B);
+            WillemOP.SetAddr(58);
             LPT.Auto(1);
-            WillemOP.SetData(0);
+            LPT.D0(0);
             LPT.D1(1);
-            Thread.Sleep(1000);
-            WillemOP.SetData(0xFF);
+            LPT.D2(0);
+            Thread.Sleep(10);
             LPT.D1(0);
-            Thread.Sleep(1000);
-            WillemOP.SetData(0);
-            LPT.Auto(0);
-            Thread.Sleep(1000);
-            LPT.Auto(0);
+            //Thread.Sleep(10);
+            LPT.D1(1);
+            //Thread.Sleep(10);
 
             byte b = 0;
             for (int i = 0; i < 64; i++)
             {
-                b = WillemOP.Read4021();
+                b = LPT.Read379();
                 Console.Write(i+":"+Tools.byte2HexStr(b)+" ");
                 WillemOP.SetCE_H();
-                Thread.Sleep(10);
-                b = WillemOP.Read4021();
+                Thread.Sleep(1);
+                b = LPT.Read379();
                 Console.Write(i + ":" + Tools.byte2HexStr(b) + " ");
 
                 WillemOP.SetCE_L();
-                Thread.Sleep(10);
-                b = WillemOP.Read4021();
+                Thread.Sleep(1);
+                b = LPT.Read379();
                 Console.WriteLine(i + ":" + Tools.byte2HexStr(b));
 
             }

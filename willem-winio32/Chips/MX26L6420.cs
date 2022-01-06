@@ -20,7 +20,7 @@ namespace willem_winio32
             WillemOP.SetVCC_H();
             WillemOP.SetVPP_H();
             Thread.Sleep(1000);
-            WillemOP.Write16BitCommand(0x555, 0, 0xF0);
+            WillemOP.Write16BitCommand(0x555, 0, 0xF0); //复位
             WillemOP.SetCE_H();
 
             WillemOP.SetVPP_L();
@@ -62,7 +62,7 @@ namespace willem_winio32
                 WillemOP.Write16BitCommand(0x555,0, 0xA0);
 
                 WillemOP.SetCE_H();
-                Console.WriteLine("Write ADDR:" + Tools.int2HexStr(i) + " DATA:" + data[i]);
+                //Console.WriteLine("Write ADDR:" + Tools.int2HexStr(i) + " DATA:" + data[i]);
                 WillemOP.SetAddr(i + 1);
                 WillemOP.SetData(data[i+1]);
 

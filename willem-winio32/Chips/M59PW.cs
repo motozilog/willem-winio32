@@ -8,20 +8,63 @@ using System.Windows.Forms;
 namespace willem_winio32
 {
     //改部分写入、读取：ok
-    public class M59PW016 : IChip
+    public class M59PW016 : M59PW, IChip
+    {
+    }
+
+    public class M59PW032 : M59PW, IChip
+    {
+        private int chipsize = 0x400000;
+        M59PW pw016 = new M59PW016();
+        public ChipConfig GetConfig()
+        {
+            ChipConfig config = pw016.GetConfig();
+            config.ChipLength = chipsize;
+            config.ChipModel = "M59PW032";
+            config.Note = "M59PW032未经芯片验证。" + config.Note;
+            return config;
+        }
+    }
+
+    public class M59PW064 : M59PW, IChip
+    {
+        private int chipsize = 0x800000;
+        M59PW pw016 = new M59PW016();
+        
+        public ChipConfig GetConfig()
+        {
+            ChipConfig config = pw016.GetConfig();
+            config.ChipLength = chipsize;
+            config.ChipModel = "M59PW064";
+            return config;
+        }
+    }
+
+
+
+    public abstract class M59PW : IChip
     {
         private int chipsize = 0x200000;
-        //private int chipsize = 0x1000000;
-        MX29F1610 mx29f1610 = new MX29F1610();
-        MX29F1615 mx29f1615 = new MX29F1615();
 
         public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
         {
-            return mx29f1615.Read(baseAddr, length,totalLength);
+            //初始化
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_H();
+            WillemOP.SetVPP_L();
+            Thread.Sleep(200);
+
+            return EpromOp.GenRead(baseAddr, length, totalLength);
         }
 
-        private void writeH(byte[] data, Int64 baseAddr, int length)
+        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
         {
+            //写的时候要16bit
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_H();
+            WillemOP.SetVPP_H();
+            Thread.Sleep(1000);
+
             for (Int64 i = baseAddr; i < baseAddr + length; i = i + 2)
             {
                 //1 0x5555 0xAA
@@ -43,22 +86,8 @@ namespace willem_winio32
                 WillemOP.SetCE_L();
                 WillemOP.SetCE_H();
 
-                Tools.ShowProgress(i,data,baseAddr, length);
+                Tools.ShowProgress(i, data, baseAddr, length);
             }
-        }
-
-        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
-        {
-            //写的时候要16bit
-            WillemOP.SetCE_H();
-            WillemOP.SetVCC_H();
-            WillemOP.SetVPP_H();
-            Thread.Sleep(1000);
-
-            DateTime startTime = System.DateTime.Now;
-
-            writeH(data, baseAddr,length);
-//            writeBatch(data, length);
         }
 
         public void Erase(string args)
@@ -83,7 +112,7 @@ namespace willem_winio32
             WillemOP.SetCE_H();
             WillemOP.SetVCC_H();
             WillemOP.SetVPP_H();
-            Thread.Sleep(1);
+            Thread.Sleep(100);
 
             //1 0x5555 0xAA
             WillemOP.Write16BitCommand(0x555, 0xAA);
@@ -124,8 +153,6 @@ namespace willem_winio32
                 }
                 lastReg = reg;
             }
-
-
         }
 
 
@@ -136,26 +163,26 @@ namespace willem_winio32
             WillemOP.SetCE_H();
             WillemOP.SetVCC_H();
             WillemOP.SetVPP_H();
-            Thread.Sleep(1000);
+            Thread.Sleep(300);
             //WillemOP.SetCE_L();
 
             //1 0x5555 0xAA
-            WillemOP.Write16BitCommand(0x555,0, 0xAA);
+            WillemOP.Write16BitCommand(0x555, 0, 0xAA);
 
             //2 0x2AAA 0x55
-            WillemOP.Write16BitCommand(0x2AA,0,  0x55);
+            WillemOP.Write16BitCommand(0x2AA, 0, 0x55);
 
             //3 0x5555 0x80
-            WillemOP.Write16BitCommand(0x555,0,  0x80);
+            WillemOP.Write16BitCommand(0x555, 0, 0x80);
 
             //4 0x5555 0xAA
-            WillemOP.Write16BitCommand(0x555,0,  0xAA);
+            WillemOP.Write16BitCommand(0x555, 0, 0xAA);
 
             //5 0x2AAA 0x55
-            WillemOP.Write16BitCommand(0x2AA,0,  0x55);
+            WillemOP.Write16BitCommand(0x2AA, 0, 0x55);
 
             //6 0x5555 0x10
-            WillemOP.Write16BitCommand(0x555,0,  0x10);
+            WillemOP.Write16BitCommand(0x555, 0, 0x10);
 
             byte lastReg = 0x0;
             for (int i = 0; i < 100; i++)
@@ -240,132 +267,5 @@ namespace willem_winio32
             return config;
         }
 
-
-        #region 废弃代码
-        private void writeBatch(byte[] data, int length)
-        {
-            int blockSize = 0x40000;
-            //            int blockSize = 0x10;
-            int blockCount = chipsize / blockSize;
-
-
-            for (int block = 0; block < blockCount; block++)
-            {
-                if (block % 2 == 0)
-                {
-                    Console.WriteLine("下发连续写入命令");
-                    //1 0x5555 0xAA
-                    WillemOP.Write16BitCommand(0x555, 0xAA);
-
-                    //2 0x2AAA 0x55
-                    WillemOP.Write16BitCommand(0x2AA, 0x55);
-
-                    //3 0x5555 0x20
-                    WillemOP.Write16BitCommand(0x555, 0x20);
-                }
-
-                Console.WriteLine();
-                int startAddr = block * blockSize;
-                int lastAddr = (block * blockSize) + blockSize;
-                Console.WriteLine("正在写入第" + block + "块 StartAddr:" + Tools.int2HexStr(startAddr) + " lastAddr:" + Tools.int2HexStr(lastAddr));
-                for (int i = startAddr; i < lastAddr; i = i + 2)
-                {
-                    if (i % 0x100 == 0)
-                    {
-                        Console.WriteLine("正在写入第" + block + "块" + ",编程地址:" + Tools.int2HexStr(i));
-                    }
-
-                    WillemOP.SetCE_H();
-                    WillemOP.SetAddr(i + 1);
-                    WillemOP.SetData(data[i + 1]);
-                    WillemOP.SetAddr(i);
-                    WillemOP.SetData(data[i]);
-                    WillemOP.SetCE_L();
-                    WillemOP.SetCE_H();
-                }
-            }
-        }
-        #endregion  废弃代码
-
-
     }
-
-    public class M59PW032 : IChip
-    {
-        private int chipsize = 0x400000;
-        M59PW016 pw016 = new M59PW016();
-        public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
-        {
-            return pw016.Read(baseAddr, length, totalLength);
-        }
-
-        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
-        {
-            pw016.Write(data, baseAddr, length, totalLength);
-        }
-
-        public void Erase(string args)
-        {
-            pw016.Erase(args);
-        }
-        
-        public byte[] ReadId()
-        {
-            return pw016.ReadId();
-        }
-
-        public ChipConfig GetConfig()
-        {
-            ChipConfig config = pw016.GetConfig();
-            config.ChipLength = chipsize;
-            config.ChipModel = "M59PW032";
-            config.Note = "M59PW032未经芯片验证。" + config.Note;
-            return config;
-
-        }
-
-
-        public void SpecialFunction(string Filename, string EraseDelay, string BaseAddr, string TryLength)
-        {
-        }
-    }
-
-    public class M59PW064 : IChip
-    {
-        private int chipsize = 0x800000;
-        M59PW016 pw016 = new M59PW016();
-        public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
-        {
-            return pw016.Read(baseAddr, length,totalLength);
-        }
-
-        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
-        {
-            pw016.Write(data, baseAddr, length,totalLength);
-        }
-
-        public void Erase(string args)
-        {
-            pw016.Erase(args);
-        }
-        
-        public byte[] ReadId()
-        {
-            return pw016.ReadId();
-        }
-
-        public void SpecialFunction(string Filename, string EraseDelay, string BaseAddr, string TryLength)
-        {
-        }
-
-        public ChipConfig GetConfig()
-        {
-            ChipConfig config = pw016.GetConfig();
-            config.ChipLength = chipsize;
-            config.ChipModel = "M59PW064";
-            return config;
-
-        }
-    }
-
 }

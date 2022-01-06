@@ -9,9 +9,10 @@ namespace willem_winio32
 {
     public class WinIO
     {
-        static uint ADDR_378 = 0x00000378;
-        static uint ADDR_379 = 0x00000379;
-        static uint ADDR_37A = 0x0000037A;
+        static uint BASE_ADDR = 0x00000378;
+        static uint ADDR_378 = BASE_ADDR;
+        static uint ADDR_379 = BASE_ADDR+1;
+        static uint ADDR_37A = BASE_ADDR+2;
 
         [DllImport("WinIo32.dll")]
         public static extern bool InitializeWinIo();
@@ -71,21 +72,15 @@ namespace willem_winio32
         public static void Set37A(int index, int value)
         {
             byte data = WinIO.Read37A();
-//            Console.WriteLine(Tools.byte2Str(data));
             data = Tools.setBit(data, index, value);
-//            Console.WriteLine(Tools.byte2Str(data));
             WinIO.Write37A(data);
         }
 
         public static void Set378(int index, int value)
         {
             byte data = WinIO.Read378();
-//            Console.WriteLine(Tools.byte2Str(data));
             data = Tools.setBit(data, index, value);
-//            Console.WriteLine(Tools.byte2Str(data));
-//            Thread.Sleep(1);
             WinIO.Write378(data);
-//            Thread.Sleep(1);
         }
 
 
@@ -101,6 +96,18 @@ namespace willem_winio32
         {
             try
             {
+                try
+                {
+                    string LPTParamConfig = Ini.Read("LPTParamConfig");
+                    uint Addr = (uint)Convert.ToInt64(LPTParamConfig,16);
+                    if (Addr >= 0x278)
+                    {
+                        BASE_ADDR = Addr;
+                        Console.WriteLine("设置LPT端口地址：" + Tools.int2HexStr(Addr));
+                    }
+                }
+                catch { }
+
                 if (InitializeWinIo())
                 {
                     IsInitialize = true;

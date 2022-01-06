@@ -18,7 +18,7 @@ namespace willem_winio32
             config.ChipLength = chipsize;
             config.ChipModel = "W27X010";
             config.DipSw = willem_winio32.Properties.Resources.W27X010;
-            config.Jumper = willem_winio32.Properties.Resources.W27X010_Erase;
+            //config.Jumper = willem_winio32.Properties.Resources.W27X010_Erase;
             config.Note = "W27C010/W27E010，注意擦除时要跳线(A9=VPP)";
 
             return config;

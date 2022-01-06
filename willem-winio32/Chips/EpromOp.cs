@@ -9,6 +9,8 @@ namespace willem_winio32
 {
     public class EpromOp
     {
+        static bool debug = false;
+
         #region W27C
         public static void W27CWrite(byte[] data, Int64 baseAddr, int length)
         {
@@ -54,7 +56,8 @@ namespace willem_winio32
 
         public static void W27CErase(int length)
         {
-            MessageBox.Show("擦除前请先按特殊跳线进行跳接");
+            W27CEraseJumperForm jf = new W27CEraseJumperForm();
+            jf.ShowDialog();
             byte[] data = new byte[length];
             for (int i = 0; i < data.Length; i++)
             {
@@ -85,13 +88,13 @@ namespace willem_winio32
 
             Thread.Sleep(20);
             WillemOP.Init();
-
-            MessageBox.Show("请将特殊跳线恢复原跳接");
+            W27CEraseJumperForm jf2 = new W27CEraseJumperForm("请将Willem跳线从蓝色跳回黄色");
+            jf2.ShowDialog();
         }
         #endregion
 
         #region MX29
-        public static void MX29Write(Int64 addr, byte data)
+        public static void MX29WriteCommand()
         {
             //1 0x5555 0xAA
             WillemOP.Write16BitCommand(0x5555, 0xAA);
@@ -101,16 +104,33 @@ namespace willem_winio32
 
             //3 0x5555 0xA0
             WillemOP.Write16BitCommand(0x5555, 0xA0);
+        }
 
-
+        public static void MX29WriteCommand(Int64 addr, byte data)
+        {
+            MX29WriteCommand();
             WillemOP.SetCE_H();
             WillemOP.SetAddr(addr);
             WillemOP.SetData(data);
             WillemOP.SetCE_L();
-
         }
 
-        public static byte[] MX29ReadId()
+        public static void MX29WriteCommand(Int64 addr, byte dataH,byte dataL)
+        {
+            MX29WriteCommand();
+
+            WillemOP.SetCE_H();
+            WillemOP.SetAddr(addr+1);
+            WillemOP.SetData(dataH);
+
+            WillemOP.SetAddr(addr);
+            WillemOP.SetData(dataL);
+
+            WillemOP.SetCE_L();
+            WillemOP.SetCE_H();
+        }
+
+        public static byte[] MX29ReadIdCommand()
         {
             //1 0x5555 0xAA
             WillemOP.Write16BitCommand(0x5555, 0xAA);
@@ -141,7 +161,7 @@ namespace willem_winio32
             return id;
         }
 
-        public static void MX29Reset()
+        public static void MX29ResetCommand()
         {
             //先用3个16位命令做复位
             //1 0x5555 0xAA
@@ -154,7 +174,7 @@ namespace willem_winio32
             WillemOP.Write16BitCommand(0x5555, 0xF0, 0xF0);
         }
 
-        public static void MX29Erase()
+        public static void MX29EraseCommand()
         {
             //1 0x5555 0xAA
             WillemOP.Write16BitCommand(0x5555, 0xAA);
@@ -174,7 +194,69 @@ namespace willem_winio32
             //6 0x5555 0x10
             WillemOP.Write16BitCommand(0x5555, 0x10);
         }
+
+        public static byte[] MX29Read(Int64 baseAddr, int length, Int64 totalLength)
+        {
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_H();
+            Thread.Sleep(200);
+
+            //先复位
+            WillemOP.SetVPP_H();
+            EpromOp.MX29ResetCommand();
+            WillemOP.SetVPP_L();
+            return GenRead(baseAddr,length,totalLength);
+        }
+
+        public static void MX29ReadRegCommandOnly()
+        {
+            //1 0x5555 0xAA
+            WillemOP.Write16BitCommand(0x5555, 0xAA);
+
+            //2 0x2AAA 0x55
+            WillemOP.Write16BitCommand(0x2AAA, 0x55);
+
+            //3 0x5555 0x70
+            WillemOP.Write16BitCommand(0x5555, 0x70);
+        }
+
+        public static byte MX29ReadRegCommand()
+        {
+            MX29ReadRegCommandOnly();
+            WillemOP.SetCE_H();
+            WillemOP.SetAddr(0);
+            WillemOP.SetCE_L();
+            byte bL = WillemOP.Read4021();
+            if (debug)
+            {
+                Console.WriteLine(Tools.byte2Str(bL));
+            }
+            WillemOP.SetCE_H();
+            return bL;
+        }
+
         #endregion
+
+
+        public static byte[] GenRead(Int64 baseAddr, int length, Int64 totalLength)
+        {            
+            byte[] data = new byte[baseAddr + length];
+
+            //再用8bit读取
+            for (Int64 i = baseAddr; i < baseAddr + length; i++)
+            {
+                WillemOP.SetCE_H();
+                WillemOP.SetAddr(i);
+                WillemOP.SetCE_L();
+                byte b = WillemOP.Read4021();
+                data[i] = b;
+                WillemOP.SetCE_H();
+
+                Tools.ShowProgress(i, data, baseAddr, length);
+            }
+            return data;
+        }
+
 
         #region AM29LV
 

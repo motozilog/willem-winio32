@@ -35,8 +35,11 @@ namespace willem_winio32
                 case "MX29F1610":
                     ci = new MX29F1610();
                     break;
+                case "MX29L3211_8bit":
+                    ci = new MX29L3211_8bit();
+                    break;
                 case "MX29L3211":
-                    ci = new MX29L3211();
+                    ci = new MX29L3211_16Bit();
                     break;
                 case "M59PW016":
                     ci = new M59PW016();

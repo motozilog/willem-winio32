@@ -28,6 +28,8 @@ namespace willem_winio32
         private void button1_Click(object sender, EventArgs e)
         {
             Ini.Write("LPTParamConfig", textBoxParam.Text.Trim());
+            MessageBox.Show("保存参数成功，将关闭程序重新运行");
+            System.Environment.Exit(0);
         }
     }
 }

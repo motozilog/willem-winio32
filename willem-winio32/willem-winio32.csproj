@@ -74,8 +74,6 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Chips\MX29F1615.cs" />
-    <Compile Include="Chips\MX29F1610.cs" />
     <Compile Include="BasicIO\ILPT.cs" />
     <Compile Include="Ini.cs" />
     <Compile Include="BasicIO\LPTCH341A.cs" />
@@ -84,8 +82,9 @@
     <Compile Include="Chips\M59PW1282.cs" />
     <Compile Include="Chips\MX26L12811.cs" />
     <Compile Include="Chips\MX26L6420.cs" />
-    <Compile Include="Chips\MX29L3211.cs" />
     <Compile Include="BasicIO\LPTConfig.cs" />
+    <Compile Include="Chips\MX29F_8Bit.cs" />
+    <Compile Include="Chips\MX29L3211.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Chips\W27C4096.cs" />
@@ -99,6 +98,18 @@
     <Compile Include="Tools.cs" />
     <Compile Include="Chips\W27X010.cs" />
     <Compile Include="BasicIO\WinIO.cs" />
+    <Compile Include="Chips\W27C4096EraseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Chips\W27C4096EraseForm.Designer.cs">
+      <DependentUpon>W27C4096EraseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Chips\W27CEraseJumperForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Chips\W27CEraseJumperForm.Designer.cs">
+      <DependentUpon>W27CEraseJumperForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -117,6 +128,12 @@
     </Compile>
     <EmbeddedResource Include="Chips\S25XXChipLengthForm.resx">
       <DependentUpon>S25XXChipLengthForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Chips\W27C4096EraseForm.resx">
+      <DependentUpon>W27C4096EraseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Chips\W27CEraseJumperForm.resx">
+      <DependentUpon>W27CEraseJumperForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -149,9 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SOP44-8Bit-Adapter-MX29F1610.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SOP44-16Bit-Adapter.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MX26L6420.png" />
@@ -188,6 +202,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SOP16-Adapter-S25XX.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\W27C4096-Erase-Adapter.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SOP44-16Bit-Adapter-MX29L3211.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MX29L3211_SOP16_Jumper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SOP44-16Bit-Adapter.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

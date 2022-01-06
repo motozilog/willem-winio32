@@ -19,7 +19,7 @@ namespace willem_winio32
             {
                 instance = new LPTWinIO();
             }
-            Console.WriteLine("DriverType:WinIO(需要原生LPT地址为0x378)");
+            Console.WriteLine("DriverType:WinIO(LPT打印口)");
             return instance;
         }
         //EOF单例模式
@@ -53,7 +53,8 @@ namespace willem_winio32
         public LPTConfig GetConfig()
         {
             LPTConfig config = new LPTConfig();
-            config.LPTNote= "需要原生LPT打印口，地址为0x378。\r\n若为Win7-64/Win10-64，需要开启调试模式";
+            config.LPTNote= "需要LPT打印口，默认地址为0x378。\r\n若为Win7-64/Win10-64，需要开启调试模式";
+            config.LPTParam = "接口地址(默认：0x378)：";
             return config;
         }
 
