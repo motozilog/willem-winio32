@@ -27,7 +27,7 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 ## Work in progress Chip:
 
->MX29L3211(support,but write slow)
+>ATF22V10B
 
 
 ## Plan Chip:
