@@ -1,4 +1,5 @@
-﻿using System;
+﻿//partical source from ATFBlast.exe - based on GALBLAST by Manfred Winterhoff
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,8 @@ namespace willem_winio32
             config.pesrow = 58;
             config.pesbytes = 8;
             config.cfgrow = 60;
+            config.erasetime = 1000;
+            config.progtime = 2;
 
             int[] cfg16V8AB = new int[] { 
                 2048, 2049, 2050, 2051, 2193, 2120, 2121, 2122, 
@@ -42,55 +45,145 @@ namespace willem_winio32
             return config;
         }
 
-
-
-
         public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
         {
             GALConfig config = makeGALConfig();
+            return readATFGALByS25XX(config);
+        }
+
+        private void init()
+        {
+            WillemOP.SetVPP_L();
+            LPT.Auto(1);
+            LPT.D2(0);  //P/V- low
+            WillemOP.SetAddr(0x3F);
+            LPT.Auto(1);
+            LPT.D0(1);  //SDIN H
+            WillemOP.SetCE_H(); //SCLK H
+            LPT.Auto(1);
+            LPT.D1(1);  //STB H
+            WillemOP.SetVCC_H();
+            Thread.Sleep(200);
+
+            WillemOP.SetCE_L(); //SCLK L
+
+            WillemOP.SetVPP_H();
+            Thread.Sleep(200);
+        }
+
+        private byte[] readATFGALByS25XX(GALConfig config)
+        {
+            init();
+
             byte[] fuses = new byte[config.fuses];
 
-            byte[] data = new byte[config.fuses+4];
-            return data;
+            Console.Write("BITS:");
+            for (int d = 0; d < 64; d++)
+            {
+                int s = (d * 32) % 10;
+                Console.Write(s);
+            }
+            Console.WriteLine();
+
+            // read fuse rows ATF16V8
+            for (int row = 0; row < config.rows; row++)
+            {
+                Console.Write("R:" + row.ToString().PadLeft(2, '0') + ":");
+                setAddr(row);
+                for (int bit = 0; bit < config.bits; bit++)
+                {
+                    fuses[config.rows * bit + row] = readBit();
+                }
+                Console.WriteLine();
+            }
+
+            // read UES ATF16V8
+            setAddr(config.uesrow);
+            Console.WriteLine("UES fuse");
+            for (int bit = 0; bit < 64; bit++)
+            {
+                fuses[config.uesfuse + bit] = readBit();
+            }
+            Console.WriteLine();
+
+            //read CFG ATF16V8
+            setAddr(config.cfgrow);
+            Console.WriteLine("CFG fuse");
+            for (int bit = 0; bit < config.cfg.Length; bit++)
+            {
+                fuses[config.cfg[bit]] = readBit();
+            }
+
+            showFuses(fuses);
+            shutdown();
+
+            //保存
+            byte[] datas =writeMAMEFusesBin(fuses);
+            return datas ;
         }
 
-        private void PowerOn()
+        private void showFuses(byte[] fuses)
         {
-            WillemOP.SetVCC_H();
-            Thread.Sleep(100);
-            WillemOP.SetVPP_H();
-            Thread.Sleep(100);
+            Console.WriteLine();
+            for (int row = 0; row < fuses.Length; row = row + 32)
+            {
+                Console.Write("L" + row.ToString().PadLeft(5, '0') + " ");
+                for (int c = 0; c < 32; c++)
+                {
+                    if ((row + c) < fuses.Length)
+                    {
+                        Console.Write(fuses[row + c]);
+                    }
+                }
+                Console.WriteLine("*");
+            }
+        }
 
-            //CE作为CLK
+        private void shutdown()
+        {
+            WillemOP.SetVPP_L();
+            Thread.Sleep(10);
+            WillemOP.SetVCC_L();
+            WillemOP.SetData(0);
+            Console.WriteLine();
+        }
+
+        private void setAddr(int addr)
+        {
+            //写地址前的这个动作少不了，否则会写入时写飞
+            LPT.Auto(1);
+            LPT.D0(1);
+            LPT.D1(1);
+            LPT.D2(0);  //读写的PV，设地址时必须为0(Read)
+            Thread.Sleep(10);
+
+            WillemOP.SetAddr(addr);
+
+            Thread.Sleep(10);
+            LPT.Auto(1);
+            LPT.D0(1);
+            LPT.D1(1);
+            LPT.D2(0);  //读写的PV，设地址时必须为0(Read)
+
+            Thread.Sleep(1);
+            LPT.D1(0);
+            Thread.Sleep(10);
+            LPT.D1(1);
+            Thread.Sleep(10);
+        }
+
+        private byte readBit()
+        {
+            byte value = WillemOP.ReadSerialOut();
+//            byte value = (byte)((WillemOP.Read4021()>>7)&0x01);
+            Console.Write(Tools.byte2HexStr(value).Substring(1, 1));
+            WillemOP.SetCE_H();
             WillemOP.SetCE_L();
-            WillemOP.SetAddr(0);
-
-            //SetVPP(0);    // VPP off
-            //SetPV(0);     // P/V- low
-            //SetRow(0x3F); // RA0-5 high
-            //SetSDIN(1);   // SDIN high
-            //SetSCLK(1);   // SCLK high
-            //SetSTB(1);    // STB high
-            //SetVCC(1);    // turn on VCC (if controlled)
-            //Delay(100);
-            //SetSCLK(0);   // SCLK low
-            //if (writeorerase)
-            //{
-            //    SetVPP(1); // VPP = programming voltage
-            //}
-            //else
-            //{
-            //    SetVPP(0); // VPP = +12V
-            //}
-            //Delay(20);
-
+            return value;
         }
 
-        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
+        private byte[] readMAMEFusesBin(GALConfig config, byte[] data)
         {
-            PowerOn();
-
-            GALConfig config = makeGALConfig();
             byte[] fuses = new byte[config.fuses];
             //TODO: MAME bin读入过程
             int fusesCount = Tools.FourByteToIntMSB(data[0], data[1], data[2], data[3]);
@@ -98,7 +191,7 @@ namespace willem_winio32
             if (fusesCount != config.fuses)
             {
                 Console.WriteLine("熔丝位数量不对，若为jed格式请先用jedutil.exe转成bin后再导入");
-                return;
+                return null;
             }
 
             List<byte> fusesList = new List<byte>();
@@ -113,216 +206,155 @@ namespace willem_winio32
             {
                 fuses[i] = fusesList[i];
             }
+            return fuses;
+        }
 
-            //显示出来
-            for (int i = 0; i < fuses.Length; i++)
+        private byte[] writeMAMEFusesBin(byte[] fuses)
+        {
+            //先转换长度
+            byte[] fusesLength = Tools.int2ByteMSB(fuses.Length);
+
+            for (int i = 0; i < fusesLength.Length; i++)
             {
-                if (i % 32 == 0) { Console.WriteLine(); Console.Write(i.ToString().PadLeft(5, '0') + ":"); }
-                if (i % 8 == 0) { Console.Write(" "); }
-                Console.Write(fuses[i]);
+                Console.Write(Tools.byte2HexStr(fusesLength[i]));                
             }
-            
 
-                
-            //SetPV(1); //TODO
+            //转换熔丝位
+            List<byte> fuseList = new List<byte>();
+            for (int f = 0; f < fuses.Length; f = f + 8)
+            {
+                byte[] bs = new byte[8];
+                int index = 8;
+                //最后一byte
+                if ((f + 8) > fuses.Length)
+                {
+                    index = fuses.Length - f;
+                    Console.WriteLine(index);
+                }
+                for (int i = 0; i < index; i++)
+                {
+                    bs[i] = fuses[f + i];
+                }
+                byte b = Tools.bit2ByteLSB(bs);
+                fuseList.Add(b);
+            }
+
+            //组装数据
+            List<byte> dataList = new List<byte>();
+            dataList.AddRange(fusesLength);
+            dataList.AddRange(fuseList);
+
+            byte[] data = dataList.ToArray();
+            string s = Tools.file2HexStr(data);
+            Console.WriteLine(s);
+            return data;
+        }
+
+        public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
+        {
+            GALConfig config = makeGALConfig();
+
+            byte[] fuses = readMAMEFusesBin(config, data);
+            if (fuses == null) { return; }
+            //显示出来
+            //showFuses(fuses);
+
+            //开始
+            init();
+            LPT.Auto(1);
+            LPT.D2(0);
             //write fuse array 32*64 = 2048
             for (int row = 0; row < config.rows; row++)
             {
-                WillemOP.SetAddr(row);
+                setAddr(row);
+                LPT.Auto(1);
+                LPT.D2(1);
+                Console.Write("R"+row.ToString().PadLeft(2,'0')+" ");
                 for (int bit = 0; bit < config.bits; bit++)
                 {
-                    SendBit(fuses[config.rows * bit + row]);
+                    byte writeByte = fuses[config.rows * bit + row];
+                    Console.Write(writeByte);
+                    sendBit(writeByte);
                 }
-                //Strobe(progtime); //TODO
+                Console.WriteLine();
+                strobe(config.progtime);
             }
 
             // write UES 64
-            WillemOP.SetAddr(config.uesrow);
+            Console.WriteLine("UES fuse");
+            setAddr(config.uesrow);
+            LPT.Auto(1);
+            LPT.D2(1);
             for (int bit = 0; bit < 64; bit++)
             {
-                SendBit(fuses[config.uesfuse + bit]);
+                byte writeByte = fuses[config.uesfuse + bit];
+                Console.Write(writeByte);
+                sendBit(writeByte);
             }
-            //Strobe(progtime);
+            strobe(config.progtime);
 
             // write CFG
-            WillemOP.SetAddr(config.cfgrow);
-            for (int bit = 0; bit < 82; bit++)
+            Console.WriteLine("CFG fuse");
+            setAddr(config.cfgrow);
+            LPT.Auto(1);
+            LPT.D2(1);
+            for (int bit = 0; bit < config.cfg.Length; bit++)
             {
-                SendBit(fuses[config.cfg[bit]]);
+                byte writeByte = fuses[config.cfg[bit]];
+                Console.Write(writeByte);
+                sendBit(writeByte);
             }
-            //Strobe(progtime);
-            //SetPV(0);
+            strobe(config.progtime);
+
+            shutdown();                
         }
 
-        private void SendBit(byte b)
+        private void sendBit(byte b)
         {
             LPT.D0(b);
             WillemOP.SetCE_H();
             WillemOP.SetCE_L();
         }
 
-        public void Erase(string args)
-        {
-            GALConfig config =  makeGALConfig();
-            PowerOn();
-
-            //EraseGAL
-            //SetPV(1);
-            WillemOP.SetAddr(config.eraserow);
-
-            //if (gal == GAL16V8 || gal == ATF16V8B || gal == GAL20V8)
-            //{
-            SendBit(1);
-            //}
-            //Strobe(erasetime);
-            //SetPV(0);
-
-
-            //EraseWholeGAL
-            WillemOP.SetAddr(config.eraseallrow);
-            //SetPV(1);
-            //if (gal == GAL16V8 || gal == ATF16V8B || gal == GAL20V8)
-            //{
-                SendBit(1);
-            //}
-            //Strobe(erasetime);
-            //SetPV(0);
-
-        }
-
-        public byte[] ReadId()
-        {
-            GALConfig config = makeGALConfig();
-            PowerOn();
-            StrobeRow(0x3B);
-            byte[] pes = new byte[config.pesbytes];
-            for (int by = 0; by < config.pesbytes; by++)
-            {
-                byte value = 0;
-                for (int i = 0; i < 8;i++ )
-                {
-                    byte recValue = ReceiveBit();
-                    //Console.WriteLine("by:" + Tools.byte2Str(recValue) + ":" + Tools.byte2HexStr(recValue));
-                }               
-            }
-
-            //    for(byte=0;byte<galinfo[gal].pesbytes;byte++)
-            //        {
-            //        pes[byte]=0;
-            //        for(bitmask=0x1;bitmask<=0x80;bitmask<<=1)
-            //            {
-            //            if(ReceiveBit()) pes[byte]|=bitmask;
-            //        }
-            //    }
-
-            // F=0x46 1=0x31 6=0x36 V=0x56(01010110) 8=0x38(00111000)
-            //if (pes[6]=='F' && pes[5]=='1' && pes[4]=='6' && pes[3]=='V' && pes[2]=='8')
-            //{
-            //   type = ATF16V8B;
-            //}
-
-            return new byte[1];
-        }
-
-        public byte ReceiveBit()
-        {
-            byte b = 0;
-            Thread.Sleep(5);
-            WillemOP.SetCE_L();
-            Thread.Sleep(5);
-            b = WillemOP.Read4021();
-            Console.WriteLine("ReceiveBit:" + Tools.byte2Str(b));
-            WillemOP.SetCE_H();
-            Thread.Sleep(5);
-            b = WillemOP.Read4021();
-            Console.WriteLine("ReceiveBit:" + Tools.byte2Str(b));
-            WillemOP.SetCE_L();
-            Thread.Sleep(5);
-            //BOOL bit;
-            //bit=GetSDOUT();
-            //SetSCLK(1);
-            //SetSCLK(0);
-            //return bit;
-            b = (byte)((b & 0x80) >> 7);
-            return b;
-        }
-
-        
-
-
-        public void StrobeRow(int row)
-        {
-            //Strobe(2);
-            //1.SET Auto = 0,地址输出模式
-            WillemOP.SetAddr(row);
-            Thread.Sleep(20);
-            LPT.Auto(1);
-            Thread.Sleep(20);
-            LPT.Auto(0);
-
-
-
-            //switch (gal)
-            //{
-            //    case GAL16V8:
-            //    case GAL20V8:
-            //    case ATF16V8B:
-            //        SetRow(row);         // set RA0-5 to row number
-            //        Strobe(2);           // pulse /STB for 2ms
-            //        break;
-            //    case GAL22V10:
-            //    case ATF22V10B:
-            //    case ATF22V10C:
-            //        SetRow(0);           // set RA0-5 low
-            //        SendAddress(6, row);  // send row number (6 bits)
-            //        SetSTB(0);
-            //        SetSTB(1);           // pulse /STB
-            //        SetSDIN(0);          // SDIN low
-            //}
-
-
-
-
-        }
-
-
-
         public void SpecialFunction(string Filename, string EraseDelay, string BaseAddr, string TryLength)
         {
-            WillemOP.SetAddr(58);
-            WillemOP.SetVCC_H();
-            Thread.Sleep(200);
-            WillemOP.SetVPP_H();
-            Thread.Sleep(200);
-
-            WillemOP.SetAddr(58);
-            LPT.Auto(1);
-            LPT.D0(0);
-            LPT.D1(1);
-            LPT.D2(0);
-            Thread.Sleep(10);
-            LPT.D1(0);
-            //Thread.Sleep(10);
-            LPT.D1(1);
-            //Thread.Sleep(10);
-
-            byte b = 0;
-            for (int i = 0; i < 64; i++)
-            {
-                b = LPT.Read379();
-                Console.Write(i+":"+Tools.byte2HexStr(b)+" ");
-                WillemOP.SetCE_H();
-                Thread.Sleep(1);
-                b = LPT.Read379();
-                Console.Write(i + ":" + Tools.byte2HexStr(b) + " ");
-
-                WillemOP.SetCE_L();
-                Thread.Sleep(1);
-                b = LPT.Read379();
-                Console.WriteLine(i + ":" + Tools.byte2HexStr(b));
-
-            }
+            GALConfig config = makeGALConfig();
+            eraseATF(config.eraseallrow, config.erasetime);
+            Console.WriteLine("擦除签名位结束");
         }
+
+        public void Erase(string args)
+        {
+            GALConfig config = makeGALConfig();
+            eraseATF(config.eraserow, config.erasetime);
+        }
+
+        private void eraseATF(int addr, int erasetime)
+        {
+            init();
+
+            setAddr(addr);
+            LPT.Auto(1);
+            LPT.D2(1);  // P/V-
+
+            sendBit(1);  //SDIN H
+            strobe(erasetime);
+
+            shutdown();
+
+        }
+
+        private void strobe(int ms)
+        {
+            LPT.D1(0);
+            Thread.Sleep(ms);
+            LPT.D1(1);
+            Thread.Sleep(ms);
+        }
+
+        public byte[] ReadId() { return null; }
+
+
 
         public ChipConfig GetConfig()
         {
@@ -330,13 +362,13 @@ namespace willem_winio32
             config.Erase = true;
             config.Read = true;
             config.Write = true;
-            config.ReadId = true;
             config.ChipLength = 0x117;
             config.ChipModel = "ATF16V8B";
             config.Note = "注意结尾是B。其它结尾没有测试";
-            config.SpecialFunction = "测试";
-            config.DipSw = willem_winio32.Properties.Resources.MX29F1615;
-            config.Adapter = willem_winio32.Properties.Resources.SOP44_16Bit_Adapter;
+            config.SpecialFunction = "擦除签名位";
+            config.DipSw = willem_winio32.Properties.Resources.ATF16V8B;
+            config.Jumper = willem_winio32.Properties.Resources.ATF16V8B_Jumper;
+            config.Adapter = willem_winio32.Properties.Resources.ATFGAL_Adapter;
             return config;
         }
     }
@@ -357,5 +389,7 @@ namespace willem_winio32
         public int cfgrow { get; set; }       /* row address of config bits         */
         public int[] cfg { get; set; }         /* pointer to config bit numbers      */
         public int cfgbits { get; set; }      /* number of config bits              */
+        public int erasetime { get; set; }      //擦除等待时间
+        public int progtime { get; set; }   //写入等待时间
     }
 }

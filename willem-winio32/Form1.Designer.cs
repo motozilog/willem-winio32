@@ -943,6 +943,7 @@
             "M59PW1282",
             "MX29F1615",
             "S25XX",
+            "ATF16V8B",
             "--不推荐芯片---",
             "MX29F1610",
             "MX29L3211_8bit",
@@ -950,7 +951,7 @@
             "--极不推荐芯片---",
             "MX26L12811",
             "--未完成---",
-            "ATF16V8B"});
+            "ATF22V10B"});
             this.comboBoxChipSelect.Location = new System.Drawing.Point(69, 117);
             this.comboBoxChipSelect.Name = "comboBoxChipSelect";
             this.comboBoxChipSelect.Size = new System.Drawing.Size(127, 20);

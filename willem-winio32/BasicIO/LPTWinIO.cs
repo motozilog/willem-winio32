@@ -42,7 +42,9 @@ namespace willem_winio32
         public void Initialize() { WinIO.Initialize(); }
 
 
-        public void Write378(byte value) { WinIO.Write378(value); }
+        public void Write378(byte value) {
+            //Console.WriteLine(Tools.byte2Str(value)); 
+            WinIO.Write378(value); }
         public byte Read379() { return WinIO.Read379(); }
 
         public void Close()

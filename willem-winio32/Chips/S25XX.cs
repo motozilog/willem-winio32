@@ -42,10 +42,9 @@ namespace willem_winio32
             for (int i = 7; i >= 0; i--)
             {
                 LPT.D1(1);
-                if (delayUs != 0) { Thread.Sleep(1); } 
-                byte value = LPT.Read379();
-                int d8 = ((value >> 7) & 0x01);
-                data = Tools.setBit(data, i, ~d8);
+                if (delayUs != 0) { Thread.Sleep(1); }
+                byte value = WillemOP.ReadSerialOut();
+                data = Tools.setBit(data, i, value);
                 LPT.D1(0);
                 if (delayUs != 0) { Thread.Sleep(1); }
             }

@@ -83,6 +83,17 @@ namespace willem_winio32
             return value;
         }
 
+        public static byte[] int2ByteMSB(int i)
+        {
+            byte[] b = new byte[4];
+            b[0] = (byte)(i >> 24);
+            b[1] = (byte)(i >> 16);
+            b[2] = (byte)(i >> 8);
+            b[3] = (byte)(i);
+
+            return b;
+        }
+
         public static byte[] byte2BitLSB(byte input)
         {
             byte[] result = new byte[8];
@@ -94,6 +105,34 @@ namespace willem_winio32
             return result;
         }
 
+        public static byte bit2ByteLSB(byte[] bs)
+        {
+            byte b = 0;
+            for (int i = 0; i < bs.Length; i++)
+            {
+                b = setBit(b, i, bs[i]);
+            }
+            return b;
+        }
+
+        public static string file2HexStr(byte[] bytes)
+        {
+            string s = "";
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                if (i % 0x10 == 0)
+                {
+                    if ((i % 0x10) == 0 && i > 0)
+                    {
+                        s = s + "\r\n";
+                    }
+                    s = s + int2HexStr(i) + ":";
+
+                }
+                s = s + byte2HexStr(bytes[i]) + " ";
+            }
+            return s;
+        }
 
         //微秒级延迟
         //1:1ms 0.05:500us

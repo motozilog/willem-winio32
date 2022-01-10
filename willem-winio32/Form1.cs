@@ -197,21 +197,7 @@ namespace willem_winio32
             {
                 r.BaseStream.Seek(0, SeekOrigin.Begin);    //将文件指针设置到文件开            
                 byte[] bytes = r.ReadBytes(0x100);
-                string s = "";
-                for (int i = 0; i < 0x100; i++)
-                {
-                    if (i % 0x10 == 0)
-                    {
-                        if ((i % 0x10) == 0 && i > 0)
-                        {
-                            s = s + "\r\n";
-                        }
-                        s = s + Tools.int2HexStr(i) + ":";
-
-                    }
-                    s = s + Tools.byte2HexStr(bytes[i]) + " ";
-
-                }
+                string s = Tools.file2HexStr(bytes);
                 textBoxFileContent.Text = s;
             }
 
@@ -298,7 +284,6 @@ namespace willem_winio32
             Thread.Sleep(20);
             WillemOP.Init();
             Console.WriteLine("擦除结束");
-            MessageBox.Show("擦除结束");
         }
 
         private void buttonWrite_Click(object sender, EventArgs e)

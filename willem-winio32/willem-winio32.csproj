@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ATF16V8B.cs" />
+    <Compile Include="ATFBlast.cs" />
     <Compile Include="Chips\ChipConfig.cs" />
     <Compile Include="Chips\IChip.cs" />
     <Compile Include="G.cs" />
@@ -195,9 +196,6 @@
     <None Include="Resources\S25XX.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ATF16V8B.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\DIP42-Adapter-MX29F1615.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +212,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SOP44-16Bit-Adapter.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ATFGAL_Adapter.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ATF16V8B.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ATF16V8B_Jumper.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -73,6 +73,26 @@ namespace willem_winio32.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap ATF16V8B_Jumper {
+            get {
+                object obj = ResourceManager.GetObject("ATF16V8B_Jumper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap ATFGAL_Adapter {
+            get {
+                object obj = ResourceManager.GetObject("ATFGAL_Adapter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap CH341A_TO_LPT {
             get {
                 object obj = ResourceManager.GetObject("CH341A_TO_LPT", resourceCulture);
@@ -265,7 +285,7 @@ namespace willem_winio32.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap W27C4096_Erase_Adapter {
             get {
-                object obj = ResourceManager.GetObject("W27C4096-Erase-Adapter", resourceCulture);
+                object obj = ResourceManager.GetObject("W27C4096_Erase_Adapter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

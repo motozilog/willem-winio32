@@ -113,6 +113,13 @@ namespace willem_winio32
             return data;
         }
 
+        public static byte ReadSerialOut()
+        {
+            byte b  = (byte)~LPT.Read379();
+            b = (byte)((b >> 7) & 0x01);
+            return b;
+        }
+
         public static void Write16BitCommandData(int addr, byte dataH, byte dataL)
         {
             int data = dataH;

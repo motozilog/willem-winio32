@@ -13,9 +13,9 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 >MX29F1615
 
->MX29F1610(support,but not recommend，use M59PW016 instead)
+>MX29L3211(support,but write slow)
 
->MX29L3211(support,but not recommend，use M59PW064 instead)
+>MX29F1610(support,but not recommend，use M59PW016 instead)
 
 >MX26L6420(support,but not recommend，use M59PW064 instead，make sure check diffient bytes again)
 
@@ -23,14 +23,16 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 >S25XX SPI NOR FLASH(Support 24bit Address& 32bit Address chip, older chip that use 16bit address,please use willem-programmer soft instead. Only tested on EN25T80 and MX25L51245. NOTE:If chip use 3.3V VCC require LDO for chip VCC, If chip use 1.8V VCC require level shifter)
 
+>ATF16V8B
 
 ## Work in progress Chip:
 
->ATF16V8B
+>MX29L3211(support,but write slow)
+
 
 ## Plan Chip:
 
->ATF22V10B
+>S29GL01G
 
 ## May Support Chip
 
@@ -42,7 +44,7 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 >SPI NAND FLASH (Bad Block Manage, And Chip Size too large too slow. Use CH341A programmer instead)
 
->NAND FLASH(Bad Block Manage, may direct connect to LPT will better for speed.)
+>NAND FLASH(Bad Block Manage, may direct connect to LPT will better for speed. Use CBM2199E instead)
 
 >eMMC(Use eMMC to SDcard reader instead)
 
