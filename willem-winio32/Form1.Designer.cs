@@ -78,7 +78,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.buttonSpecialFunction = new System.Windows.Forms.Button();
-            this.pictureBoxAdapter = new System.Windows.Forms.PictureBox();
             this.label20 = new System.Windows.Forms.Label();
             this.buttonBaseAddrDecrease = new System.Windows.Forms.Button();
             this.buttonBaseAddrIncrease = new System.Windows.Forms.Button();
@@ -102,15 +101,12 @@
             this.buttonErase = new System.Windows.Forms.Button();
             this.buttonWrite = new System.Windows.Forms.Button();
             this.buttonRead = new System.Windows.Forms.Button();
-            this.pictureBoxJumper = new System.Windows.Forms.PictureBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.pictureBoxDipSw = new System.Windows.Forms.PictureBox();
             this.label12 = new System.Windows.Forms.Label();
             this.comboBoxChipSelect = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonLPTParamConfig = new System.Windows.Forms.Button();
-            this.pictureBoxLPTNoteImage = new System.Windows.Forms.PictureBox();
             this.labelLPTNote = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -126,16 +122,20 @@
             this.buttonOpAuto = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pictureBoxAdapter = new System.Windows.Forms.PictureBox();
+            this.pictureBoxJumper = new System.Windows.Forms.PictureBox();
+            this.pictureBoxDipSw = new System.Windows.Forms.PictureBox();
+            this.pictureBoxLPTNoteImage = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAdapter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxJumper)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDipSw)).BeginInit();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLPTNoteImage)).BeginInit();
-            this.tabPage4.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSetVCC
@@ -660,14 +660,6 @@
             this.buttonSpecialFunction.Visible = false;
             this.buttonSpecialFunction.Click += new System.EventHandler(this.buttonSpecialFunction_Click);
             // 
-            // pictureBoxAdapter
-            // 
-            this.pictureBoxAdapter.Location = new System.Drawing.Point(270, 161);
-            this.pictureBoxAdapter.Name = "pictureBoxAdapter";
-            this.pictureBoxAdapter.Size = new System.Drawing.Size(150, 150);
-            this.pictureBoxAdapter.TabIndex = 110;
-            this.pictureBoxAdapter.TabStop = false;
-            // 
             // label20
             // 
             this.label20.AutoSize = true;
@@ -893,15 +885,6 @@
             this.buttonRead.Visible = false;
             this.buttonRead.Click += new System.EventHandler(this.buttonRead_Click);
             // 
-            // pictureBoxJumper
-            // 
-            this.pictureBoxJumper.InitialImage = null;
-            this.pictureBoxJumper.Location = new System.Drawing.Point(5, 241);
-            this.pictureBoxJumper.Name = "pictureBoxJumper";
-            this.pictureBoxJumper.Size = new System.Drawing.Size(259, 70);
-            this.pictureBoxJumper.TabIndex = 84;
-            this.pictureBoxJumper.TabStop = false;
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
@@ -910,14 +893,6 @@
             this.label13.Size = new System.Drawing.Size(65, 12);
             this.label13.TabIndex = 82;
             this.label13.Text = "Willem拨码";
-            // 
-            // pictureBoxDipSw
-            // 
-            this.pictureBoxDipSw.Location = new System.Drawing.Point(5, 153);
-            this.pictureBoxDipSw.Name = "pictureBoxDipSw";
-            this.pictureBoxDipSw.Size = new System.Drawing.Size(259, 70);
-            this.pictureBoxDipSw.TabIndex = 81;
-            this.pictureBoxDipSw.TabStop = false;
             // 
             // label12
             // 
@@ -934,6 +909,7 @@
             this.comboBoxChipSelect.FormattingEnabled = true;
             this.comboBoxChipSelect.Items.AddRange(new object[] {
             "--推荐芯片---",
+            "TSOP29系列",
             "W27X010",
             "W27C4096",
             "M59PW016",
@@ -943,7 +919,6 @@
             "M59PW1282",
             "MX29F1615",
             "S25XX",
-            "ATF16V8B",
             "--不推荐芯片---",
             "MX29F1610",
             "MX29L3211_8bit",
@@ -951,7 +926,7 @@
             "--极不推荐芯片---",
             "MX26L12811",
             "--未完成---",
-            "ATF22V10B"});
+            "ATF16V8B"});
             this.comboBoxChipSelect.Location = new System.Drawing.Point(69, 117);
             this.comboBoxChipSelect.Name = "comboBoxChipSelect";
             this.comboBoxChipSelect.Size = new System.Drawing.Size(127, 20);
@@ -1016,11 +991,11 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.buttonLPTParamConfig);
-            this.tabPage3.Controls.Add(this.pictureBoxLPTNoteImage);
             this.tabPage3.Controls.Add(this.labelLPTNote);
             this.tabPage3.Controls.Add(this.label18);
             this.tabPage3.Controls.Add(this.label17);
             this.tabPage3.Controls.Add(this.comboBoxLPTDeviceType);
+            this.tabPage3.Controls.Add(this.pictureBoxLPTNoteImage);
             this.tabPage3.Location = new System.Drawing.Point(4, 4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(427, 462);
@@ -1038,14 +1013,6 @@
             this.buttonLPTParamConfig.UseVisualStyleBackColor = true;
             this.buttonLPTParamConfig.Visible = false;
             this.buttonLPTParamConfig.Click += new System.EventHandler(this.buttonLPTParamConfig_Click);
-            // 
-            // pictureBoxLPTNoteImage
-            // 
-            this.pictureBoxLPTNoteImage.Location = new System.Drawing.Point(3, 67);
-            this.pictureBoxLPTNoteImage.Name = "pictureBoxLPTNoteImage";
-            this.pictureBoxLPTNoteImage.Size = new System.Drawing.Size(420, 378);
-            this.pictureBoxLPTNoteImage.TabIndex = 85;
-            this.pictureBoxLPTNoteImage.TabStop = false;
             // 
             // labelLPTNote
             // 
@@ -1216,6 +1183,40 @@
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // pictureBoxAdapter
+            // 
+            this.pictureBoxAdapter.Location = new System.Drawing.Point(270, 161);
+            this.pictureBoxAdapter.Name = "pictureBoxAdapter";
+            this.pictureBoxAdapter.Size = new System.Drawing.Size(150, 150);
+            this.pictureBoxAdapter.TabIndex = 110;
+            this.pictureBoxAdapter.TabStop = false;
+            // 
+            // pictureBoxJumper
+            // 
+            this.pictureBoxJumper.InitialImage = null;
+            this.pictureBoxJumper.Location = new System.Drawing.Point(5, 241);
+            this.pictureBoxJumper.Name = "pictureBoxJumper";
+            this.pictureBoxJumper.Size = new System.Drawing.Size(259, 70);
+            this.pictureBoxJumper.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxJumper.TabIndex = 84;
+            this.pictureBoxJumper.TabStop = false;
+            // 
+            // pictureBoxDipSw
+            // 
+            this.pictureBoxDipSw.Location = new System.Drawing.Point(5, 153);
+            this.pictureBoxDipSw.Name = "pictureBoxDipSw";
+            this.pictureBoxDipSw.Size = new System.Drawing.Size(259, 70);
+            this.pictureBoxDipSw.TabIndex = 81;
+            this.pictureBoxDipSw.TabStop = false;
+            // 
+            // pictureBoxLPTNoteImage
+            // 
+            this.pictureBoxLPTNoteImage.Location = new System.Drawing.Point(3, 67);
+            this.pictureBoxLPTNoteImage.Name = "pictureBoxLPTNoteImage";
+            this.pictureBoxLPTNoteImage.Size = new System.Drawing.Size(420, 378);
+            this.pictureBoxLPTNoteImage.TabIndex = 85;
+            this.pictureBoxLPTNoteImage.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1230,18 +1231,18 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAdapter)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxJumper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDipSw)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLPTNoteImage)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAdapter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxJumper)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDipSw)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLPTNoteImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

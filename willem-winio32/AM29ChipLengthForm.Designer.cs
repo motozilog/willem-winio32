@@ -1,6 +1,6 @@
 ﻿namespace willem_winio32
 {
-    partial class S25XXChipLengthForm
+    partial class AM29ChipLengthForm
     {
         /// <summary>
         /// Required designer variable.
@@ -33,6 +33,7 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.comboBoxLength = new System.Windows.Forms.ComboBox();
+            this.labelNote = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -78,14 +79,6 @@
             this.comboBoxLength.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLength.FormattingEnabled = true;
             this.comboBoxLength.Items.AddRange(new object[] {
-            "0x000100",
-            "0x000200",
-            "0x000400",
-            "0x000800",
-            "0x001000",
-            "0x002000",
-            "0x004000",
-            "0x008000",
             "0x010000",
             "0x020000",
             "0x040000",
@@ -98,29 +91,34 @@
             "0x2000000",
             "0x4000000",
             "0x8000000",
-            "0x10000000",
-            "0x20000000",
-            "0x40000000",
-            "0x80000000",
-            "0x100000000"});
+            "0x10000000"});
             this.comboBoxLength.Location = new System.Drawing.Point(45, 6);
             this.comboBoxLength.Name = "comboBoxLength";
             this.comboBoxLength.Size = new System.Drawing.Size(121, 20);
             this.comboBoxLength.TabIndex = 4;
             this.comboBoxLength.SelectedValueChanged += new System.EventHandler(this.comboBoxLength_SelectedValueChanged);
             // 
-            // S25XXChipLengthForm
+            // labelNote
+            // 
+            this.labelNote.AutoSize = true;
+            this.labelNote.Location = new System.Drawing.Point(12, 30);
+            this.labelNote.Name = "labelNote";
+            this.labelNote.Size = new System.Drawing.Size(0, 12);
+            this.labelNote.TabIndex = 5;
+            // 
+            // AM29ChipLengthForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(377, 80);
+            this.Controls.Add(this.labelNote);
             this.Controls.Add(this.comboBoxLength);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.labelLength);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
-            this.Name = "S25XXChipLengthForm";
+            this.Name = "AM29ChipLengthForm";
             this.Text = "设置芯片容量";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -134,5 +132,6 @@
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.ComboBox comboBoxLength;
+        private System.Windows.Forms.Label labelNote;
     }
 }

@@ -1,7 +1,9 @@
 # willem-winio32
 Willem programmer use winio32 for add support some offical unsupported chip
 
-## Current Support Chips(V1.22):
+## Current Support Chips(V1.50):
+
+>AM29/MX29(Tested Chip: AM29LV200BB、MX29LV320、S29GL032、S29GL064、MX29LV128、S29GL128、MX29GL256、S29GL256、MX29GL512、S29GL512、S29GL01G)
 
 >M59PW016
 
@@ -32,13 +34,13 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 ## Plan Chip:
 
->S29GL01G
+>S70GL02
 
 ## May Support Chip
 
 >GAL16V8B/GAL20V8B/GAL22V10B (VPP voltage may require modify from willem programmer)
 
->Some TSOP48/56 Parallel NOR FLASH(e.g: S29GL01G wait for adapter)
+>F0095H0
 
 ## Never Support Chip:
 

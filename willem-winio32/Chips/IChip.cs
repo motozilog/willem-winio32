@@ -65,7 +65,9 @@ namespace willem_winio32
                 case "ATF16V8B":
                     ci = new ATF16V8B();
                     break;
-
+                case "TSOP29系列":
+                    ci = new AM29VPP();
+                    break;
             }
             return ci;
         }

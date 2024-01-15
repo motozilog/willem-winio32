@@ -366,9 +366,8 @@ namespace willem_winio32
             config.ChipModel = "ATF16V8B";
             config.Note = "注意结尾是B。其它结尾没有测试";
             config.SpecialFunction = "擦除签名位";
-            config.DipSw = willem_winio32.Properties.Resources.ATF16V8B;
-            config.Jumper = willem_winio32.Properties.Resources.ATF16V8B_Jumper;
-            config.Adapter = willem_winio32.Properties.Resources.ATFGAL_Adapter;
+            config.DipSw = willem_winio32.Properties.Resources.MX29F1615;
+            config.Adapter = willem_winio32.Properties.Resources.SOP44_16Bit_Adapter;
             return config;
         }
     }

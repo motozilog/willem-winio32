@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="ATF16V8B.cs" />
     <Compile Include="ATFBlast.cs" />
+    <Compile Include="Chips\AM29LV200.cs" />
     <Compile Include="Chips\ChipConfig.cs" />
     <Compile Include="Chips\IChip.cs" />
     <Compile Include="G.cs" />
@@ -96,6 +97,12 @@
     <Compile Include="Chips\S25XXChipLengthForm.Designer.cs">
       <DependentUpon>S25XXChipLengthForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AM29ChipLengthForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AM29ChipLengthForm.Designer.cs">
+      <DependentUpon>AM29ChipLengthForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools.cs" />
     <Compile Include="Chips\W27X010.cs" />
     <Compile Include="BasicIO\WinIO.cs" />
@@ -135,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Chips\W27CEraseJumperForm.resx">
       <DependentUpon>W27CEraseJumperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AM29ChipLengthForm.resx">
+      <DependentUpon>AM29ChipLengthForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -196,6 +206,9 @@
     <None Include="Resources\S25XX.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ATF16V8B.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\DIP42-Adapter-MX29F1615.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -214,13 +227,13 @@
     <None Include="Resources\SOP44-16Bit-Adapter.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ATFGAL_Adapter.jpg" />
+    <None Include="Resources\AM29.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ATF16V8B.png" />
+    <None Include="Resources\AM29_Jumper.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ATF16V8B_Jumper.png" />
+    <None Include="Resources\AM29-Adapter.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

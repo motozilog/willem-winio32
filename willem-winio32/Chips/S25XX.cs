@@ -274,7 +274,7 @@ namespace willem_winio32
             config.ChipLength = 0x100;
             try
             {
-                int length = Convert.ToInt32(Ini.Read("S25XXLength"),16);
+                int length = Convert.ToInt32(Ini.Read(G.S25XXLengthIniKey), 16);
                 if (length >= 0x100)
                 {
                     config.ChipLength = length;

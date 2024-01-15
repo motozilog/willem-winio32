@@ -45,9 +45,46 @@ namespace willem_winio32
                 //LPT.Write378(value);
             }
         }
+
         public static void SetAddr(Int64 addr)
         {
             SetAddr((int)addr);
+        }
+
+
+        public static void SetAddr(Int64 addr, int addressLength)
+        {
+            //1.SET Auto = 0,地址输出模式
+            LPT.Auto(0);
+
+            //逐位输出
+
+            //首8位
+            int A7_A0 = (int)(addr & 0x0000FF);
+            int A15_A8 = (int)(addr >> 8 & 0x0000FF);
+            int A32_A16 = (int)(addr >> 16 & 0x00FFFF);
+
+            byte A23_A16 = (byte)(addr >> 16 & 0x0000FF);
+            byte A32_A24 = (byte)(addr >> 24 & 0x0000FF);
+
+//            Console.WriteLine(Tools.byte2Str(A32_A24)+" "+Tools.byte2Str(A23_A16));
+
+            int sendCount = addressLength - 16;
+
+            for (int i = sendCount; i >= 0; i--)
+            {
+                LPT.D0(0); //CLK
+                int dataA7_A0 = (A7_A0 >> i) & 0x01;
+                int dataA15_A8 = (A15_A8 >> i) & 0x01;
+                int dataA32_A16 = (A32_A16 >> i) & 0x01;
+
+                LPT.D1(dataA7_A0);      //A7_A0 ->D1
+                LPT.D4(dataA15_A8);     //A15_A8 ->D4
+                LPT.D5(dataA32_A16);    //A32_A16 ->D5
+                LPT.D0(1);              //CLK
+
+            }
+            int a = 0;
         }
 
         public static void SetData(byte data)
@@ -56,6 +93,16 @@ namespace willem_winio32
             LPT.Auto(1);    //此时OE自动变成H
             //写入数据
             LPT.Write378(data);
+        }
+
+        public static void SetDataMode()
+        {
+            LPT.Auto(1);
+        }
+
+        public static void SetAddressMode()
+        {
+            LPT.Auto(0);
         }
 
         public static void SetCE_H() { LPT.SELin(0); }
@@ -75,11 +122,6 @@ namespace willem_winio32
             //设置4021 PS为L, CLK为L
             LPT.D1(0);
             LPT.D2(0);
-            //合并命令
-            //byte psClk = 0x00;
-            //psClk = Tools.setBit(psClk, 1, 0);
-            //psClk = Tools.setBit(psClk, 2, 0);
-            //LPT.Write378(psClk);
 
             //设置4021 PS为H，锁存数据
             LPT.D1(1);
@@ -92,12 +134,7 @@ namespace willem_winio32
             //设置4021 PS为L, CLK为L
             LPT.D1(0);    //WinIO.Set378(1, 0);
             LPT.D2(1);    //WinIO.Set378(2, 1);
-            //合并
-            //byte readClkD7 = 0x00;
-            //readClkD7 = Tools.setBit(readClkD7, 1, 0);
-            //readClkD7 = Tools.setBit(readClkD7, 2, 1);
-            //LPT.Write378(readClkD7);
-          
+
             //读取剩余位：
             for (int i = 6; i >= 0; i--)
             {
@@ -118,6 +155,62 @@ namespace willem_winio32
             byte b  = (byte)~LPT.Read379();
             b = (byte)((b >> 7) & 0x01);
             return b;
+        }
+
+        public static void Write16BitCommandDataVPP(int addr, byte dataH, byte dataL)
+        {
+            int data = dataH;
+            data = data << 8;
+            data = data | dataL;
+            if (debug)
+            {
+                Console.WriteLine(
+                    Convert.ToString(addr, 16).PadLeft(6, '0').ToUpper()
+                    +" 16bit DATA:" + Convert.ToString(data, 16).PadLeft(4, '0').ToUpper()
+                    + " H:" + Convert.ToString(dataH, 16).PadLeft(2, '0').ToUpper()
+                    + " L:" + Convert.ToString(dataL, 16).PadLeft(2, '0').ToUpper());
+            }
+
+            WillemOP.SetAddr(addr);
+            WillemOP.SetCE_L();
+            //WillemOP.SetCE_H();
+            //H
+            WillemOP.SetVPP_H();
+            WillemOP.SetData(dataH);
+
+            //L
+            WillemOP.SetVPP_L();
+            WillemOP.SetData(dataL);
+            //Thread.Sleep(new TimeSpan(50));
+            WillemOP.SetCE_H();
+        }
+
+        public static void Write16BitCommandDataVPP32(Int64 addr,int addressLength, byte dataH, byte dataL)
+        {
+            int data = dataH;
+            data = data << 8;
+            data = data | dataL;
+            if (debug)
+            {
+                Console.WriteLine(
+                    Convert.ToString(addr, 16).PadLeft(6, '0').ToUpper()
+                    + " 16bit DATA:" + Convert.ToString(data, 16).PadLeft(4, '0').ToUpper()
+                    + " H:" + Convert.ToString(dataH, 16).PadLeft(2, '0').ToUpper()
+                    + " L:" + Convert.ToString(dataL, 16).PadLeft(2, '0').ToUpper());
+            }
+
+            WillemOP.SetAddr(addr, addressLength);
+            WillemOP.SetCE_L();
+            //WillemOP.SetCE_H();
+            //H
+            WillemOP.SetVPP_H();
+            WillemOP.SetData(dataH);
+
+            //L
+            WillemOP.SetVPP_L();
+            WillemOP.SetData(dataL);
+            //Thread.Sleep(new TimeSpan(50));
+            WillemOP.SetCE_H();
         }
 
         public static void Write16BitCommandData(int addr, byte dataH, byte dataL)
@@ -182,14 +275,21 @@ namespace willem_winio32
                 WillemOP.SetVPP_L();
                 Thread.Sleep(10);
             }
-            WillemOP.SetVCC_L();
+            WillemOP.SetVCC_H();
+            WillemOP.SetVPP_H();
+            Thread.Sleep(10);
+            WillemOP.SetAddr(0);
+            WillemOP.SetData(0);
+            Thread.Sleep(10);
             WillemOP.SetVPP_L();
             WillemOP.SetCE_H();
             Thread.Sleep(10);
             WillemOP.SetData(0);
             Thread.Sleep(10);
-            WillemOP.SetAddr(0);
-            Thread.Sleep(10);
+            WillemOP.SetDataMode();
+            WillemOP.SetAddressMode();
+            WillemOP.SetCE_L();
+            WillemOP.SetVCC_L();
         }
 
 

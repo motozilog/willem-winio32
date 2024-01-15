@@ -9,10 +9,10 @@ using System.Windows.Forms;
 
 namespace willem_winio32
 {
-    public partial class S25XXChipLengthForm : Form
+    public partial class AM29ChipLengthForm : Form
     {
         string iniSaveKey = null;
-        public S25XXChipLengthForm(string iniKey = G.S25XXLengthIniKey, List<string> lengthList=null)
+        public AM29ChipLengthForm(string iniKey = G.AM29VPPLengthIniKey, List<string> lengthList=null)
         {
             iniSaveKey = iniKey;
             InitializeComponent();
@@ -64,6 +64,40 @@ namespace willem_winio32
                     s = s + "(" + length / 0x400 + "K)";
                 }
                 labelLength.Text = s;
+
+                if (length == 0x40000)
+                {
+                    labelNote.Text = "实测通过：AM29LV200BB";
+                }
+                else if (length == 0x400000)
+                {
+                    labelNote.Text = "实测通过：MX29LV320、S29GL032";
+                }
+                else if (length == 0x800000)
+                {
+                    labelNote.Text = "实测通过：MX29LV640、S29GL064";
+                }
+                else if (length == 0x1000000)
+                {
+                    labelNote.Text = "实测通过：MX29LV128、S29GL128";
+                }
+                else if (length == 0x2000000)
+                {
+                    labelNote.Text = "实测通过：MX29GL256、S29GL256";
+                }
+                else if (length == 0x4000000)
+                {
+                    labelNote.Text = "实测通过：MX29GL512、S29GL512";
+                }
+                else if (length == 0x8000000)
+                {
+                    labelNote.Text = "实测通过：S29GL01G";
+                }
+                else
+                {
+                    labelNote.Text = "该容量未经测试";
+                }
+
             }
             catch { }
         }
