@@ -13,7 +13,7 @@ namespace willem_winio32
         static uint ADDR_378 = BASE_ADDR;
         static uint ADDR_379 = BASE_ADDR+1;
         static uint ADDR_37A = BASE_ADDR+2;
-
+        static byte last37A = 0;
         [DllImport("WinIo32.dll")]
         public static extern bool InitializeWinIo();
 
@@ -66,13 +66,16 @@ namespace willem_winio32
         {
             int value = 0;
             WinIO.GetPortVal((IntPtr)ADDR_37A, out value, 1);
+            last37A = (byte)value;
             return (byte)value;
         }
 
         public static void Set37A(int index, int value)
         {
-            byte data = WinIO.Read37A();
+            //byte data = WinIO.Read37A();
+            byte data = last37A;
             data = Tools.setBit(data, index, value);
+            last37A = data;
             WinIO.Write37A(data);
         }
 
@@ -111,6 +114,7 @@ namespace willem_winio32
                 if (InitializeWinIo())
                 {
                     IsInitialize = true;
+                    Read37A();
                     return true;
                 }
                 else

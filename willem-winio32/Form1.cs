@@ -13,6 +13,8 @@ namespace willem_winio32
 {
     public partial class Form1 : Form
     {
+        bool isDevelopMode = false;//是否为开发者模式
+
         IChip chip = null;
         ILPT LPT = LPTFactory.create(Ini.Read("LPTDeviceType"));
         Int64 largeChipLength = G.largeChipLength;
@@ -70,6 +72,13 @@ namespace willem_winio32
                     int length = Convert.ToInt32(textBoxTryLength.Text, 16);
                 }
                 catch { textBoxTryLength.Text = "0x20"; }
+            }
+
+            if (isDevelopMode)
+            {
+                this.comboBoxChipSelect.Items.Add("MX26L6420");
+                this.comboBoxChipSelect.Items.Add("MX26L12811");
+                this.comboBoxChipSelect.Items.Add("SST29EE512");
             }
 
             //IO初始化

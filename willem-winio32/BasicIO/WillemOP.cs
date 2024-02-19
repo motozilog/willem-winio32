@@ -44,6 +44,8 @@ namespace willem_winio32
                 //value = Tools.setBit(value, 0, 1);              //CLK
                 //LPT.Write378(value);
             }
+            LPT.D0(0); //CLK
+
         }
 
         public static void SetAddr(Int64 addr)
@@ -208,6 +210,7 @@ namespace willem_winio32
 
             //L
             WillemOP.SetVPP_L();
+            WillemOP.SetCE_L();
             WillemOP.SetData(dataL);
             //Thread.Sleep(new TimeSpan(50));
             WillemOP.SetCE_H();
@@ -266,6 +269,14 @@ namespace willem_winio32
             if (debug) { Console.WriteLine(Convert.ToString(addr, 16).PadLeft(6, '0').ToUpper()); }
             WillemOP.SetAddr(addr);
             WillemOP.SetData(dataL);
+        }
+
+        public static void Write8BitCommandData(Int64 addr, byte data)
+        {
+            WillemOP.SetCE_H();
+            WillemOP.SetAddr(addr);
+            WillemOP.SetData(data);
+            WillemOP.SetCE_L();
         }
 
         public static void Init(bool close=false)

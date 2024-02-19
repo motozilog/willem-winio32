@@ -90,8 +90,7 @@
             "0x1000000",
             "0x2000000",
             "0x4000000",
-            "0x8000000",
-            "0x10000000"});
+            "0x8000000"});
             this.comboBoxLength.Location = new System.Drawing.Point(45, 6);
             this.comboBoxLength.Name = "comboBoxLength";
             this.comboBoxLength.Size = new System.Drawing.Size(121, 20);

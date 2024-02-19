@@ -91,7 +91,7 @@ namespace willem_winio32
                 }
                 else if (length == 0x8000000)
                 {
-                    labelNote.Text = "实测通过：S29GL01G";
+                    labelNote.Text = "实测通过：S29GL01G、MX68GL1G0G";
                 }
                 else
                 {

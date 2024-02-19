@@ -144,12 +144,14 @@ namespace willem_winio32
                 WillemOP.SetCE_H();
 
                 //read status
+                Tools.delayUs(0.01);
                 WillemOP.SetDataMode();
                 byte reg0 = WillemOP.Read4021();
                 byte lastData6 = (byte)((reg0 & 0x40) >> 6);
 
                 for (int w = 0; w < 100; w++)
                 {
+                    Tools.delayUs(0.01);
                     WillemOP.SetDataMode();
                     byte reg = WillemOP.Read4021();
                     byte data6 = (byte)((reg & 0x40) >> 6);
@@ -243,11 +245,55 @@ namespace willem_winio32
                 {
                     return;
                 }
-                if (i > warningTime)
-                {
-                    Console.WriteLine("增长超过60秒，仍未检测到D7为1，可能芯片是坏的");
-                }
                 lastReg = reg;
+            }
+        }
+
+        public void EraseSector(string args)
+        {
+            init();
+            long length = Convert.ToInt64(Ini.Read(G.AM29VPPLengthIniKey), 16);
+
+            for (uint sector = 0; sector < length; sector = sector + 0x10000)
+            {
+                Console.WriteLine(Tools.uint2HexStr(sector));
+                WillemOP.Write16BitCommandDataVPP(0x555, 0x00, 0xAA);
+
+                WillemOP.Write16BitCommandDataVPP(0x2AA, 0x00, 0x55);
+
+                WillemOP.Write16BitCommandDataVPP(0x555, 0x00, 0x80);
+
+                WillemOP.Write16BitCommandDataVPP(0x555, 0x00, 0xAA);
+
+                WillemOP.Write16BitCommandDataVPP(0x2AA, 0x00, 0x55);
+
+                //WillemOP.Write16BitCommandDataVPP(0x555, 0x00, 0x10);
+                WillemOP.Write16BitCommandDataVPP((int)sector, 0x00, 0x30);
+
+                byte lastReg = 0x0;
+
+                int maxTime = 10;
+                int warningTime = 3;
+
+                for (int i = 0; i < maxTime; i++)
+                {
+                    Thread.Sleep(1000);
+                    WillemOP.SetCE_H();
+
+                    //read status
+                    WillemOP.SetDataMode();
+                    byte reg = WillemOP.Read4021();
+
+                    if (reg == 0xFF && lastReg == 0xFF)
+                    {
+                        break;
+                    }
+                    if (i > warningTime)
+                    {
+                        Console.WriteLine("增长超过60秒，仍未检测到D7为1，可能芯片是坏的");
+                    }
+                    lastReg = reg;
+                }
             }
         }
 
@@ -300,7 +346,7 @@ namespace willem_winio32
             config.DipSw = willem_winio32.Properties.Resources.AM29;
             config.Jumper = willem_winio32.Properties.Resources.AM29_Jumper;
             config.Adapter = willem_winio32.Properties.Resources.AM29_Adapter;
-            config.Note = "实际测试AM29LV200 MX29LV320 S29GL01";
+            config.Note = "不仅支持29系列，并且支持兼容29写入的16位芯片，如：MSP55系列";
             config.SpecialFunction = "设置芯片容量";
 
             return config;

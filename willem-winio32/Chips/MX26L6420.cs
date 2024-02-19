@@ -35,7 +35,7 @@ namespace willem_winio32
                 WillemOP.SetAddr(i);
                 WillemOP.SetCE_L();
                 byte b = WillemOP.Read4021();
-                data[i] = b;                
+                data[i] = b;
                 WillemOP.SetCE_H();
 
                 Tools.ShowProgress(i, data, baseAddr, length);
@@ -52,19 +52,19 @@ namespace willem_winio32
             for (Int64 i = baseAddr; i < baseAddr + length; i = i + 2)
             {
                 //1 0x5555 0xAA
-//            WAIT:
+                //            WAIT:
                 WillemOP.Write16BitCommand(0x555, 0, 0xAA);
 
                 //2 0x2AAA 0x55
-                WillemOP.Write16BitCommand(0x2AA,0, 0x55);
+                WillemOP.Write16BitCommand(0x2AA, 0, 0x55);
 
                 //3 0x5555 0xA0
-                WillemOP.Write16BitCommand(0x555,0, 0xA0);
+                WillemOP.Write16BitCommand(0x555, 0, 0xA0);
 
                 WillemOP.SetCE_H();
                 //Console.WriteLine("Write ADDR:" + Tools.int2HexStr(i) + " DATA:" + data[i]);
                 WillemOP.SetAddr(i + 1);
-                WillemOP.SetData(data[i+1]);
+                WillemOP.SetData(data[i + 1]);
 
                 WillemOP.SetAddr(i);
                 WillemOP.SetData(data[i]);
@@ -75,18 +75,21 @@ namespace willem_winio32
                 {
                     Thread.Sleep(3);
                 }
+
+
+                //因为读取寄存器时，WE固定H，CE要H->L的跳变，而适配器VPP=OE,CE=WE，没有多余
                 //for (int s = 0; s < 5; s++)
                 //{
-                    //WillemOP.SetVPP_L();
-                    //Tools.delayUs(0.2);
-                    //byte reg = WillemOP.Read4021();
-                    
-                    //WillemOP.SetVPP_H();
-                    //if (reg != data[i] && i > 0 && ((reg & 0x80) != (0x80)))
-                    //{
-                    //    Console.WriteLine("NO EQUAL:"+ Tools.int2HexStr(i)+":"+Tools.byte2HexStr(reg) + ":" + Tools.byte2Str(reg));
-                    //    goto WAIT;
-                    //}
+                //WillemOP.SetVPP_L();
+                //Tools.delayUs(0.2);
+                //byte reg = WillemOP.Read4021();
+
+                //WillemOP.SetVPP_H();
+                //if (reg != data[i] && i > 0 && ((reg & 0x80) != (0x80)))
+                //{
+                //    Console.WriteLine("NO EQUAL:"+ Tools.int2HexStr(i)+":"+Tools.byte2HexStr(reg) + ":" + Tools.byte2Str(reg));
+                //    goto WAIT;
+                //}
                 //    if ((reg & 0x80) == (0x80))
                 //    {
                 //        return;
@@ -104,7 +107,7 @@ namespace willem_winio32
             WillemOP.SetVCC_H();
             Thread.Sleep(2000);
             WillemOP.SetVPP_H();
-            Thread.Sleep(2000); 
+            Thread.Sleep(2000);
 
             //1 0x555 0xAA
             WillemOP.Write16BitCommand(0x555, 0, 0xAA);
@@ -170,7 +173,7 @@ namespace willem_winio32
             WillemOP.SetCE_H();
             WillemOP.SetVCC_H();
             WillemOP.SetVPP_H();
-            Thread.Sleep(20); 
+            Thread.Sleep(20);
 
             //1 0x555 0xAA
             WillemOP.Write16BitCommand(0x555, 0, 0xAA);
@@ -179,7 +182,7 @@ namespace willem_winio32
             WillemOP.Write16BitCommand(0x2AA, 0, 0x55);
 
             //3 0x555 0x70
-            WillemOP.Write16BitCommand(0x555,0, 0x90);
+            WillemOP.Write16BitCommand(0x555, 0, 0x90);
 
             WillemOP.SetVPP_L();
 

@@ -68,6 +68,15 @@ namespace willem_winio32
                 case "TSOP29系列":
                     ci = new AM29VPP();
                     break;
+                case "S70GL02":
+                    ci = new S70GL02(null);
+                    break;
+                case "F0095H0":
+                    ci = new S70GL02("F0095H0");
+                    break;
+                case "SST29EE512":
+                    ci = new SST29EE512();
+                    break;
             }
             return ci;
         }

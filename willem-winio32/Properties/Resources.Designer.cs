@@ -103,6 +103,26 @@ namespace willem_winio32.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap ATF16V8B_Jumper {
+            get {
+                object obj = ResourceManager.GetObject("ATF16V8B_Jumper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap ATFGAL_Adapter {
+            get {
+                object obj = ResourceManager.GetObject("ATFGAL_Adapter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap CH341A_TO_LPT {
             get {
                 object obj = ResourceManager.GetObject("CH341A_TO_LPT", resourceCulture);
@@ -226,6 +246,26 @@ namespace willem_winio32.Properties {
         internal static System.Drawing.Bitmap S25XX {
             get {
                 object obj = ResourceManager.GetObject("S25XX", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap S70GL02_Adapter {
+            get {
+                object obj = ResourceManager.GetObject("S70GL02_Adapter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap S70GL02_Jumper {
+            get {
+                object obj = ResourceManager.GetObject("S70GL02_Jumper", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

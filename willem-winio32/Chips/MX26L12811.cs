@@ -11,11 +11,44 @@ namespace willem_winio32
         static ILPT LPT = LPTFactory.create(Ini.Read("LPTDeviceType"));
         private int chipsize = 0x1000000;
         private int blocksize = 0x20000;
-        private double cmdDelay = 0.1;
+
         MX26L6420 L6420 = new MX26L6420();
         public byte[] Read(Int64 baseAddr, int length, Int64 totalLength)
         {
-            return L6420.Read(baseAddr, length,totalLength);
+            //读的时候要8bit
+            WillemOP.SetVCC_L();
+            WillemOP.SetVPP_L();
+            Thread.Sleep(5000);
+
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_H();
+            WillemOP.SetVPP_H();
+            Thread.Sleep(3000);
+            WillemOP.SetCE_L();
+
+            WillemOP.SetVPP_L();
+            Thread.Sleep(3000);
+
+            byte[] data = new byte[baseAddr + (Int64)length];
+
+            WillemOP.SetCE_H();
+            WillemOP.SetAddr(2);
+            WillemOP.SetCE_L();
+            WillemOP.Read4021();
+
+            //再用8bit读取
+            for (Int64 i = baseAddr; i < (Int64)data.Length; i++)
+            {
+                WillemOP.SetCE_H();
+                WillemOP.SetAddr(i);
+                WillemOP.SetCE_L();
+                byte b = WillemOP.Read4021();
+                data[i] = b;
+                //WillemOP.SetCE_H();
+
+                Tools.ShowProgress(i, data, baseAddr, length);
+            }
+            return data;
         }
 
         public string procReg()
@@ -24,7 +57,8 @@ namespace willem_winio32
             WillemOP.SetData(0x70);
             WillemOP.SetCE_L();
             WillemOP.SetCE_H();
-
+            //read status
+            WillemOP.SetDataMode();
             byte b = WillemOP.Read4021();
             Console.WriteLine("Write Reg:" + Tools.byte2Str(b));
 
@@ -35,108 +69,6 @@ namespace willem_winio32
             return "continue";
         }
 
-        //public void ClearReg(int i)
-        //{
-        //    WillemOP.SetCE_H();
-        //    WillemOP.SetAddr(baseAddr + i);
-        //    WillemOP.SetData(0x50);
-        //    WillemOP.SetCE_L();
-        //}
-
-        public void WriteBlock(byte[] data, Int64 startAddr, Int64 endAddr)
-        {
-        REDO:
-            WillemOP.SetVPP_H();
-            WillemOP.SetCE_H();
-            WillemOP.SetAddr(startAddr);
-            WillemOP.SetData(0xE8);
-            WillemOP.SetCE_L();
-            WillemOP.SetCE_H();
-            Tools.delayUs(0.02);
-            //WillemOP.SetVPP_L();
-            //Thread.Sleep(10);
-            //byte ready = WillemOP.Read4021();
-            //Console.WriteLine("AReady:" + Tools.byte2Str(ready));
-            //if ((ready & 0x80) != 0x80)
-            //{
-            //    Console.WriteLine("NotReady:" + Tools.byte2Str(ready));
-            //    Tools.delayUs(0.2);
-            //    goto REDO;
-            //}
-
-            Int64 opAddr = (startAddr / blocksize) * blocksize;//无语要取块的首地址！
-            //            Console.WriteLine("opAddr:" + Tools.int2HexStr(opAddr));
-            WillemOP.SetAddr(opAddr);
-            WillemOP.SetData(0xF);
-            WillemOP.SetCE_L();
-            WillemOP.SetCE_H();
-
-            for (Int64 i = startAddr; i < endAddr; i = i + 2)
-            {
-                Console.WriteLine("写入地址：" + Tools.int2HexStr(i) + " 数据:" + Tools.byte2HexStr(data[i]));
-                WillemOP.SetAddr(i + 1);
-                WillemOP.SetData(data[i + 1]);
-                WillemOP.SetAddr(i);
-                WillemOP.SetData(data[i]);
-
-                WillemOP.SetCE_L();
-                WillemOP.SetCE_H();
-            }
-            WillemOP.SetCE_H();
-            WillemOP.SetAddr(opAddr);
-            WillemOP.SetData(0xD0);
-            WillemOP.SetCE_L();
-            WillemOP.SetCE_H();
-        }
-
-        public void WriteWord2(byte[] data, int baseAddr, int length)
-        {
-            WillemOP.SetCE_H(); WillemOP.SetVCC_H(); Thread.Sleep(1000);
-            WillemOP.SetVPP_H();
-            Thread.Sleep(100);
-            DateTime startTime = System.DateTime.Now;
-
-            for (int i = baseAddr; i < (baseAddr + length); i = i + 2)
-            {
-                WillemOP.SetVPP_H();
-                WillemOP.SetCE_H();
-                WillemOP.SetAddr(i);
-                WillemOP.SetData(0x40);
-                WillemOP.SetCE_L();
-                WillemOP.SetCE_H();
-                Tools.delayUs(0.02);
-
-                WillemOP.SetAddr(i + 1);
-                //                WillemOP.SetData(0xFF);
-                WillemOP.SetData(data[i + 1]);
-
-                WillemOP.SetAddr(i);
-                //                WillemOP.SetData(0xFF);
-                WillemOP.SetData(data[i]);
-
-
-                WillemOP.SetCE_L();
-                Tools.delayUs(1);
-                WillemOP.SetCE_H();
-                Tools.delayUs(1);
-
-                //byte reg = WillemOP.Read4021();
-                //Console.WriteLine(Tools.byte2HexStr(reg) + ":" + Tools.byte2Str(reg));
-
-                if (i % 0x20 == 0)
-                {
-                    //WillemOP.SetVPP_L();
-                    //Thread.Sleep(2000);
-                }
-                if (data[i] == 0 && data[i + 1] == 0)
-                {
-                    //Thread.Sleep(2000);
-                }
-                procReg();
-
-                Tools.ShowProgress(i, data, baseAddr, length);
-            }
-        }
 
         public void Write(byte[] data, Int64 baseAddr, int length, Int64 totalLength)
         {
@@ -145,21 +77,57 @@ namespace willem_winio32
             WillemOP.SetCE_H();
             WillemOP.SetVCC_H();
             WillemOP.SetVPP_H();
-            Thread.Sleep(1000);
+            Thread.Sleep(3000);
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_H();
 
-            for (Int64 i = baseAddr; i < baseAddr + (Int64)length; i = i + 0x20)
+            Thread.Sleep(3000);
+            WillemOP.SetVPP_H();
+            Thread.Sleep(100);
+
+            for (int i = (int)baseAddr; i < (baseAddr + length); i = i + 2)
             {
-                WillemOP.SetCE_H();
-                WillemOP.SetVCC_H();
                 WillemOP.SetVPP_H();
-                Thread.Sleep(40);
-                //Console.WriteLine("buffer:" + Tools.int2HexStr(i));
-                WriteBlock(data, i, i + 0x20);
+                WillemOP.SetAddr(i);
+                WillemOP.SetCE_L();
+                WillemOP.SetData(0x40);
+                WillemOP.SetCE_H();
+
+                WillemOP.SetAddr(i + 1);
+                WillemOP.SetData(data[i + 1]);
+                WillemOP.SetAddr(i);
+                WillemOP.SetCE_L();
+                WillemOP.SetData(data[i]);
+                WillemOP.SetCE_H();
+
+                for (int s = 0; s < 100; s++)
+                {
+                    int delay = 1;
+                    WillemOP.SetCE_H();
+                    WillemOP.SetVPP_L();
+                    Tools.delayUs(delay);
+                    byte b = WillemOP.Read4021();
+                    //Console.WriteLine("擦除块地址：" + Tools.byte2Str(b));
+                    WillemOP.SetVPP_H();
+                    Tools.delayUs(delay);
+                    WillemOP.Write16BitCommand(0, 0x00, 0x70);
+                    WillemOP.SetCE_H();
+                    WillemOP.SetVPP_L();
+                    Tools.delayUs(delay);
+                    WillemOP.SetDataMode();
+                    byte be = WillemOP.Read4021();
+                    //Console.WriteLine("e擦除块地址：" +  Tools.byte2Str(be));
+                    WillemOP.SetVPP_H();
+                    Tools.delayUs(delay);
+                    WillemOP.SetCE_L();
+                    if (be == 0x80 && b == 0x80)
+                    {
+                        break;
+                    }
+                }
 
                 Tools.ShowProgress(i, data, baseAddr, length);
             }
-
-            //WriteWord2(data, baseAddr,length);
         }
 
         public void Erase(string args)
@@ -171,7 +139,7 @@ namespace willem_winio32
             Thread.Sleep(1000);
             try
             {
-                int blockAddr = Convert.ToInt32(args,16);
+                int blockAddr = Convert.ToInt32(args, 16);
                 EraseBlock(blockAddr);
             }
             catch
@@ -181,44 +149,48 @@ namespace willem_winio32
                     EraseBlock(i);
                 }
             }
+
+            WillemOP.SetCE_H();
+            WillemOP.SetVCC_L();
+            Thread.Sleep(1000);
+            WillemOP.SetVPP_L();
+            Thread.Sleep(1000);
         }
 
         private void EraseBlock(int blockAddr)
         {
             //擦除块
-            WillemOP.Write16BitCommand(blockAddr/2, 0xFF, 0x20);
-            WillemOP.Write16BitCommand(blockAddr/2, 0xFF, 0xD0);
-
-            WillemOP.SetCE_H();
-            //                Thread.Sleep(10000);
+            WillemOP.Write16BitCommand(blockAddr / 2, 0xFF, 0x20);
+            WillemOP.Write16BitCommand(blockAddr / 2, 0xFF, 0xD0);
 
             for (int s = 0; s < 100; s++)
             {
-            //RE_ERASE:
-                Thread.Sleep(1000);
-                //WillemOP.SetCE_H();
-                //WillemOP.SetData(0x70);
+                WillemOP.SetCE_H();
+                WillemOP.SetVPP_L();
+                Thread.Sleep(200);
                 //WillemOP.SetCE_L();
-                //WillemOP.SetCE_H();
+                //WillemOP.SetDataMode();
                 byte b = WillemOP.Read4021();
                 Console.WriteLine("擦除块地址：" + Tools.int2HexStr(blockAddr) + " 16位地址：" + Tools.int2HexStr(blockAddr / 2) + ":" + Tools.byte2Str(b));
-                if (b == 0)
+                WillemOP.SetVPP_H();
+                Thread.Sleep(200);
+                WillemOP.Write16BitCommand(0, 0x00, 0x70);
+                WillemOP.SetCE_H();
+                WillemOP.SetVPP_L();
+                Thread.Sleep(200);
+                WillemOP.SetDataMode();
+                byte be = WillemOP.Read4021();
+                Console.WriteLine("e擦除块地址：" + Tools.int2HexStr(blockAddr) + " 16位地址：" + Tools.int2HexStr(blockAddr / 2) + ":" + Tools.byte2Str(be));
+                WillemOP.SetVPP_H();
+                Thread.Sleep(200);
+                WillemOP.SetCE_L();
+                if (be == 0x80 && b==0x80)
                 {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Thread.Sleep(1000);
-                        byte b2 = WillemOP.Read4021();
-                        Console.WriteLine("擦除块地址：" + Tools.int2HexStr(blockAddr) + " 16位地址：" + Tools.int2HexStr(blockAddr / 2) + ":" + Tools.byte2Str(b));
-                        if (b2 != 0)
-                        {
-                            //goto RE_ERASE;
-                        }
-                    }
                     break;
                 }
             }
         }
-        
+
         public byte[] ReadId()
         {
             return L6420.ReadId();
