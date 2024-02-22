@@ -1,9 +1,23 @@
 # willem-winio32
 Willem programmer use winio32 for add support some offical unsupported chip
 
-## Current Support Chips(V1.50):
+Finally version : V1.60
 
->AM29/MX29(Tested Chip: AM29LV200BB、MX29LV320、S29GL032、S29GL064、MX29LV128、S29GL128、MX29GL256、S29GL256、MX29GL512、S29GL512、S29GL01G)
+End of development.
+
+## Current Support Chips(V1.60):
+
+>AM29/MX29(Tested Chip: AM29LV200BB、MX29LV320、S29GL032、S29GL064、MX29LV128、S29GL128、MX29GL256、S29GL256、MX29GL512、S29GL512、S29GL01G、MX68GL1G)
+
+32bit Adapter: https://oshwhub.com/motozilog/32bit-willem
+
+TSOP48 Adapter: https://oshwhub.com/motozilog/tsop56-dip48
+
+TSOP56 Adapter: https://oshwhub.com/motozilog/tsop56-dip48_copy
+
+>S70GL02(Tested Chip: S70GL02GS11FHI010)
+
+S70GL02 Adapter: https://oshwhub.com/motozilog/32bit-willem_copy_copy_copy_copy
 
 >M59PW016
 
@@ -19,28 +33,15 @@ Willem programmer use winio32 for add support some offical unsupported chip
 
 >MX29F1610(support,but not recommend，use M59PW016 instead)
 
->MX26L6420(support,but not recommend，use M59PW064 instead，make sure check diffient bytes again)
-
->MX26L12811(support,but strongly not recommend,use M59PW1282 instead, only 10 erase/programm cycle, much bytes are factory bad!)
-
 >S25XX SPI NOR FLASH(Support 24bit Address& 32bit Address chip, older chip that use 16bit address,please use willem-programmer soft instead. Only tested on EN25T80 and MX25L51245. NOTE:If chip use 3.3V VCC require LDO for chip VCC, If chip use 1.8V VCC require level shifter)
 
 >ATF16V8B
 
-## Work in progress Chip:
-
->ATF22V10B
-
-
-## Plan Chip:
-
->S70GL02
 
 ## May Support Chip
 
->GAL16V8B/GAL20V8B/GAL22V10B (VPP voltage may require modify from willem programmer)
+>ATF20V8B/ATF22V10B
 
->F0095H0
 
 ## Never Support Chip:
 
@@ -49,6 +50,18 @@ Willem programmer use winio32 for add support some offical unsupported chip
 >NAND FLASH(Bad Block Manage, may direct connect to LPT will better for speed. Use CBM2199E instead)
 
 >eMMC(Use eMMC to SDcard reader instead)
+
+>F0095H0(use VTX instead https://github.com/xvortex/VTXCart/ )
+
+## Use in Development build Chip:
+
+>MX26L6420(write unsuccess in once, require write many times)
+
+>MX26L12811(write fail in unknown condition, and can't write many times)
+
+>SST 29EE512(unknown together OE low to high to low will update address)
+
+
 
 ## Test OS
 
